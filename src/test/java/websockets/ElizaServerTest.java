@@ -58,12 +58,25 @@ public class ElizaServerTest {
 	@Test(timeout = 1000)
 	@Ignore
 	public void onChat() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
-		// COMPLETE ME!!
+
 		List<String> list = new ArrayList<>();
 		ClientEndpointConfig configuration = ClientEndpointConfig.Builder.create().build();
 		ClientManager client = ClientManager.createClient();
-		client.connectToServer(new ElizaEndpointToComplete(list), configuration, new URI("ws://localhost:8025/websockets/eliza"));
-		// COMPLETE ME!!
+        // Saving session variable to send and receive more messages
+        Session session = client.connectToServer(   new ElizaEndpointToComplete(list),
+                configuration,
+                new URI("ws://localhost:8025/websockets/eliza"));
+
+        session.getAsyncRemote().sendText("you are so kind");
+        // Waiting response from server
+        Thread.sleep(10);
+        // Ending communication
+        session.getAsyncRemote().sendText("bye");
+        // Waiting response from server
+        Thread.sleep(10);
+        //Here socket is closed. And we can recover the message at index 3 of the list.
+        assertEquals(5, list.size());
+        assertEquals("We were discussing you, not me.", list.get(3));
 	}
 
 	@After
